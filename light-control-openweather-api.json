@@ -1,0 +1,313 @@
+[
+    {
+        "id": "f229329b2c15f5d5",
+        "type": "tab",
+        "label": "Outdoor",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "54630136f39c2b76",
+        "type": "http request",
+        "z": "f229329b2c15f5d5",
+        "name": "OpenWeather API HTTP Request",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "https://api.openweathermap.org/data/2.5/weather?units=metric&lat={{{lat}}}&lon={{{lon}}}&appid={{{api_key}}}",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 820,
+        "y": 160,
+        "wires": [
+            [
+                "ef2947235106f03b",
+                "93ad5d38529dde44"
+            ]
+        ]
+    },
+    {
+        "id": "a4d5142dced2e750",
+        "type": "inject",
+        "z": "f229329b2c15f5d5",
+        "name": "Every 323 Secs",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "323",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "1.3",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 190,
+        "y": 160,
+        "wires": [
+            [
+                "25e04d119715b6e3"
+            ]
+        ]
+    },
+    {
+        "id": "25e04d119715b6e3",
+        "type": "change",
+        "z": "f229329b2c15f5d5",
+        "name": "Set API Variables",
+        "rules": [
+            {
+                "t": "set",
+                "p": "api_key",
+                "pt": "msg",
+                "to": "API Key",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "lat",
+                "pt": "msg",
+                "to": "45.000",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "lon",
+                "pt": "msg",
+                "to": "-80.000",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 470,
+        "y": 160,
+        "wires": [
+            [
+                "54630136f39c2b76"
+            ]
+        ]
+    },
+    {
+        "id": "ef2947235106f03b",
+        "type": "debug",
+        "z": "f229329b2c15f5d5",
+        "name": "Debug API Call",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1220,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "efd1593017c4c8c5",
+        "type": "debug",
+        "z": "f229329b2c15f5d5",
+        "name": "Debug Buggyness",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 770,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "4c4ae8cfccd8fe49",
+        "type": "function",
+        "z": "f229329b2c15f5d5",
+        "name": "Night - By API Call",
+        "func": "// Get datetime in milliseconds\nvar time = Date.now();\n\n// Get values of interest from API call\nvar sunrise = msg.payload.sys.sunrise * 1000;\nvar sunset = msg.payload.sys.sunset * 1000;\nvar temp = msg.payload.main.temp;\n\nif (time > sunrise && time < sunset ) {\n    // Day\n    msg.payload = {\"isNight\": false};\n} else {\n    // Night\n    msg.payload = {\"isNight\": true};\n}\n\nif (temp > 0) {\n    // Yeah, maybe it's summer?\n    msg.payload.isBuggy = true;\n} else {\n    // Yeah, the bugs are dead!\n    msg.payload.isBuggy = false;\n}\n\nmsg.payload.byAPI = true;\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 360,
+        "wires": [
+            [
+                "efd1593017c4c8c5",
+                "f2009e053b29dc3f"
+            ]
+        ]
+    },
+    {
+        "id": "a1aaba4f7f687983",
+        "type": "json",
+        "z": "f229329b2c15f5d5",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 150,
+        "y": 360,
+        "wires": [
+            [
+                "4c4ae8cfccd8fe49"
+            ]
+        ]
+    },
+    {
+        "id": "93ad5d38529dde44",
+        "type": "switch",
+        "z": "f229329b2c15f5d5",
+        "name": "Trap HTTP Errors",
+        "property": "statusCode",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "neq",
+                "v": "200",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "200",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 190,
+        "y": 280,
+        "wires": [
+            [
+                "5ec1ea479e11ed0a"
+            ],
+            [
+                "a1aaba4f7f687983"
+            ]
+        ]
+    },
+    {
+        "id": "5ec1ea479e11ed0a",
+        "type": "function",
+        "z": "f229329b2c15f5d5",
+        "name": "Night - Fallback",
+        "func": "// get datetime as object\nvar time = new Date();\n\n// 2400 local time (based on system TZ)\nvar hours = time.getHours() * 100 + time.getMinutes();\n\nif (hours > 700 && hours < 1630) {\n    // Day\n    msg.payload = { \"isNight\": false };\n} else {\n    // Night\n    msg.payload = { \"isNight\": true };\n}\n\n// Unknow temperature, play it safe\nmsg.payload.isBuggy = true;\n\nmsg.payload.byAPI = false;\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 460,
+        "y": 260,
+        "wires": [
+            [
+                "efd1593017c4c8c5",
+                "f2009e053b29dc3f"
+            ]
+        ]
+    },
+    {
+        "id": "f2009e053b29dc3f",
+        "type": "function",
+        "z": "f229329b2c15f5d5",
+        "name": "Set Desired Light State",
+        "func": "var bulb = {};\n\n// Set bulb parameters\n// For IKEA LED1924G9\nif (msg.payload.isNight) {\n    bulb.payload = {\n        \"state\": \"On\",\n        \"brightness\": 254\n    }\n\n    // Set desired color\n    if (msg.payload.isBuggy) {\n        // Bug dteterent yellow\n        bulb.payload.color = { \"hex\": \"#FFE900\" };\n    } else {\n        // Bright white\n        bulb.payload.color = { \"hex\": \"#FFFFFF\" };\n    }\n} else {\n    bulb.payload = {\n        \"state\": \"Off\"\n    }\n}\n\nreturn bulb;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 790,
+        "y": 360,
+        "wires": [
+            [
+                "969e99a68fed77fd",
+                "dbc30b47cc50513d"
+            ]
+        ]
+    },
+    {
+        "id": "969e99a68fed77fd",
+        "type": "debug",
+        "z": "f229329b2c15f5d5",
+        "name": "Debug Light Value",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1210,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "dbc30b47cc50513d",
+        "type": "mqtt out",
+        "z": "f229329b2c15f5d5",
+        "name": "",
+        "topic": "zigbee2mqtt/Front Door Outside/set",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "92389a82186fb042",
+        "x": 1180,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "92389a82186fb042",
+        "type": "mqtt-broker",
+        "name": "MQTT",
+        "broker": "mosquitto",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    }
+]

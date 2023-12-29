@@ -1,0 +1,532 @@
+[
+    {
+        "id": "3cfec9319eee78cb",
+        "type": "tab",
+        "label": "IKEA RODRET",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "a503a63d8726a441",
+        "type": "switch",
+        "z": "3cfec9319eee78cb",
+        "name": "Messages",
+        "property": "payload.action",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "on",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "off",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "brightness_stop",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "brightness_move_up",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "brightness_move_down",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 5,
+        "x": 430,
+        "y": 360,
+        "wires": [
+            [
+                "8d8d29e31c05e458"
+            ],
+            [
+                "60a4cb26d33d4692"
+            ],
+            [
+                "27bbfb9aa89a654a"
+            ],
+            [
+                "7406d521ac39e0a2",
+                "aeea6a0a24515b86"
+            ],
+            [
+                "20806e171dba0dbc",
+                "aeea6a0a24515b86"
+            ]
+        ]
+    },
+    {
+        "id": "7406d521ac39e0a2",
+        "type": "function",
+        "z": "3cfec9319eee78cb",
+        "name": "Brightness Up",
+        "func": "// Brightness Up\n\nvar step = flow.get(\"dimmerStep\");\nvar bulb =  flow.get(\"bulbState\");\nmsg.payload = {};\n\nif (bulb.state.toLowerCase() !== \"on\") {\n    msg.payload.state = \"on\";\n    bulb.brightness = 1;\n}\n\nbulb.brightness = bulb.brightness + step;\n\nif (bulb.brightness >= 255) {\n    bulb.brightness = 254;\n    flow.set('press', false);\n}\n\nflow.set(\"bulbState\", bulb);\nmsg.payload.brightness = bulb.brightness;\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 700,
+        "y": 520,
+        "wires": [
+            [
+                "538a859b368c5ba4",
+                "6244d4ad51355f09"
+            ]
+        ]
+    },
+    {
+        "id": "20806e171dba0dbc",
+        "type": "function",
+        "z": "3cfec9319eee78cb",
+        "name": "Brightness Down",
+        "func": "// Brightness Down\n\nvar step = flow.get(\"dimmerStep\");\nvar bulb = flow.get(\"bulbState\");\nmsg.payload = {};\n\nif (bulb.state.toLowerCase() !== \"on\") {\n    msg.payload.state = \"on\";\n}\n\nbulb.brightness = bulb.brightness - step;\n\nif (bulb.brightness <= 0) {\n    bulb.brightness = 0;\n    msg.payload.state = \"off\";\n    flow.set('press', false);\n}\n\nflow.set(\"bulbState\", bulb);\nmsg.payload.brightness = bulb.brightness;\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 710,
+        "y": 680,
+        "wires": [
+            [
+                "093cd6233a021f22",
+                "6244d4ad51355f09"
+            ]
+        ]
+    },
+    {
+        "id": "19f33103722dd758",
+        "type": "switch",
+        "z": "3cfec9319eee78cb",
+        "name": "Control The Loop",
+        "property": "press",
+        "propertyType": "flow",
+        "rules": [
+            {
+                "t": "true"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 1010,
+        "y": 780,
+        "wires": [
+            [
+                "20806e171dba0dbc"
+            ]
+        ]
+    },
+    {
+        "id": "b6917f7e19786750",
+        "type": "switch",
+        "z": "3cfec9319eee78cb",
+        "name": "Control The Loop",
+        "property": "press",
+        "propertyType": "flow",
+        "rules": [
+            {
+                "t": "true"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 1010,
+        "y": 620,
+        "wires": [
+            [
+                "7406d521ac39e0a2"
+            ]
+        ]
+    },
+    {
+        "id": "538a859b368c5ba4",
+        "type": "delay",
+        "z": "3cfec9319eee78cb",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "1000",
+        "timeoutUnits": "milliseconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 700,
+        "y": 620,
+        "wires": [
+            [
+                "b6917f7e19786750"
+            ]
+        ]
+    },
+    {
+        "id": "093cd6233a021f22",
+        "type": "delay",
+        "z": "3cfec9319eee78cb",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "1000",
+        "timeoutUnits": "milliseconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 700,
+        "y": 780,
+        "wires": [
+            [
+                "19f33103722dd758"
+            ]
+        ]
+    },
+    {
+        "id": "aeea6a0a24515b86",
+        "type": "change",
+        "z": "3cfec9319eee78cb",
+        "name": "Start",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "true",
+                "tot": "bool"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 670,
+        "y": 440,
+        "wires": [
+            [
+                "150fe25eb5c2a1c9"
+            ]
+        ]
+    },
+    {
+        "id": "27bbfb9aa89a654a",
+        "type": "change",
+        "z": "3cfec9319eee78cb",
+        "name": "Stop",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "false",
+                "tot": "bool"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 670,
+        "y": 400,
+        "wires": [
+            [
+                "150fe25eb5c2a1c9"
+            ]
+        ]
+    },
+    {
+        "id": "150fe25eb5c2a1c9",
+        "type": "change",
+        "z": "3cfec9319eee78cb",
+        "name": "Control The Loop",
+        "rules": [
+            {
+                "t": "set",
+                "p": "press",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 870,
+        "y": 420,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "908a1797be135732",
+        "type": "mqtt in",
+        "z": "3cfec9319eee78cb",
+        "name": "IKEA Light",
+        "topic": "zigbee2mqtt/Skunkworks Colour",
+        "qos": "2",
+        "datatype": "json",
+        "broker": "92389a82186fb042",
+        "nl": false,
+        "rap": false,
+        "inputs": 0,
+        "x": 200,
+        "y": 220,
+        "wires": [
+            [
+                "dd665326d2d4c7a4"
+            ]
+        ]
+    },
+    {
+        "id": "6244d4ad51355f09",
+        "type": "mqtt out",
+        "z": "3cfec9319eee78cb",
+        "name": "Light Control",
+        "topic": "zigbee2mqtt/Skunkworks Colour/set",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "92389a82186fb042",
+        "x": 1230,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "dd665326d2d4c7a4",
+        "type": "delay",
+        "z": "3cfec9319eee78cb",
+        "name": "",
+        "pauseType": "rate",
+        "timeout": "5",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": true,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 430,
+        "y": 220,
+        "wires": [
+            [
+                "fa678934663e91cf"
+            ]
+        ]
+    },
+    {
+        "id": "77acabfd913f824d",
+        "type": "mqtt in",
+        "z": "3cfec9319eee78cb",
+        "name": "IKEA Button",
+        "topic": "zigbee2mqtt/Skunkworks RODRET",
+        "qos": "1",
+        "datatype": "json",
+        "broker": "92389a82186fb042",
+        "nl": false,
+        "rap": false,
+        "inputs": 0,
+        "x": 210,
+        "y": 360,
+        "wires": [
+            [
+                "a503a63d8726a441"
+            ]
+        ]
+    },
+    {
+        "id": "60a4cb26d33d4692",
+        "type": "change",
+        "z": "3cfec9319eee78cb",
+        "name": "Off",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "{ \"state\": \"off\"}",
+                "tot": "json"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 670,
+        "y": 340,
+        "wires": [
+            [
+                "6244d4ad51355f09"
+            ]
+        ]
+    },
+    {
+        "id": "fa678934663e91cf",
+        "type": "change",
+        "z": "3cfec9319eee78cb",
+        "name": "Get Bulb State",
+        "rules": [
+            {
+                "t": "set",
+                "p": "bulbState",
+                "pt": "flow",
+                "to": "{}",
+                "tot": "json"
+            },
+            {
+                "t": "set",
+                "p": "bulbState.brightness",
+                "pt": "flow",
+                "to": "payload.brightness",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "bulbState.state",
+                "pt": "flow",
+                "to": "payload.state",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 700,
+        "y": 220,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "8d8d29e31c05e458",
+        "type": "function",
+        "z": "3cfec9319eee78cb",
+        "name": "On",
+        "func": "// On\n\nvar bulb = flow.get(\"bulbState\");\nmsg.payload = {};\n\nif (bulb.state.toLowerCase() === \"on\" && bulb.brightness < 254) {\n    msg.payload.brightness = 254;\n}\n\nmsg.payload.state = \"on\";\nreturn msg",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 670,
+        "y": 300,
+        "wires": [
+            [
+                "6244d4ad51355f09"
+            ]
+        ]
+    },
+    {
+        "id": "374d8e8df8e36ea1",
+        "type": "inject",
+        "z": "3cfec9319eee78cb",
+        "name": "Init Vars",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 220,
+        "y": 140,
+        "wires": [
+            [
+                "0cdf9e9bb821378d"
+            ]
+        ]
+    },
+    {
+        "id": "0cdf9e9bb821378d",
+        "type": "function",
+        "z": "3cfec9319eee78cb",
+        "name": "Set Initial Defaults",
+        "func": "if (flow.get(\"bulbState\") === undefined) {\n    var bulb = {\n        \"state\": \"off\",\n        \"brightness\": 200\n    };\n    flow.set(\"bulbState\", bulb);\n}\n\nif (flow.get(\"dimmerStep\") === undefined) {\n    flow.set(\"dimmerStep\", 25);\n}\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 450,
+        "y": 140,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "92389a82186fb042",
+        "type": "mqtt-broker",
+        "name": "MQTT",
+        "broker": "mosquitto",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    }
+]
