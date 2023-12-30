@@ -18,7 +18,7 @@
                 ]
             },
             {
-                "x": 1170,
+                "x": 1190,
                 "y": 160,
                 "wires": [
                     {
@@ -69,7 +69,7 @@
         "color": "#DDAA99",
         "outputLabels": [
             "MQTT TRADFRI or Hue Bulb",
-            "Debug"
+            "Bulb State"
         ]
     },
     {
