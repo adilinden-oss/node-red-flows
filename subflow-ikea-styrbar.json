@@ -2,14 +2,14 @@
     {
         "id": "fa70fc69676a5964",
         "type": "subflow",
-        "name": "Subflow: STRYBAR to TRADFRI or Hue (w/Color Temp)",
-        "info": "# STRYBAR to TRADFRI or Hue (w/Color Temp)\r\n\r\nThis subflow is with map the output of an\r\nIKEA STYRBAR controller to a Philips White\r\nAmbiance or an IKEA dimmable white spectrum\r\nlight. These lights support changing the colour \r\nbalance of the white spectrum light.\r\n\r\nIn the environment variables set appropriate\r\nsteps for the colour temperature move and step\r\nvalues. IKEA and Philips light do not use the\r\ncolour temperature ranges:\r\n\r\n- IKEA  \r\n  Range: 250 to 454   \r\n  Increments: 204   \r\n  Steps (10%): 20   \r\n- Philips  \r\n  Range: 153 to 500   \r\n  Increments: 347   \r\n  Steps (10%): 35   ",
+        "name": "Subflow: STRYBAR to TRADFRI or Hue",
+        "info": "# STRYBAR to TRADFRI or Hue\r\n\r\nThis subflow is with map the output of an\r\nIKEA STYRBAR controller to a variety of IKEA\r\nTRADFRI and Philips Hue bulbs. Supported are \r\nWhite Ambiance and Color Ambiance type lights.\r\n\r\nThe submodule provided 4 outputs, these have the\r\nfollowing purposes:\r\n\r\n1. Output turns bulb on or off and allows   \r\n   brightness adjustment using long presses.\r\n2. Output is tailored for White Ambiance bulbs   \r\n   and changes color temperature on right or left   \r\n   clicks or long presses.\r\n3. Output is tailered for Color Ambiance bulbs.   \r\n   Right or left clicks cycle through the colors   \r\n   defined in the `colorPalette1 environment   \r\n   variable. Long presses change the color   \r\n   temperature.\r\n\r\nIn the environment variables set appropriate\r\nsteps for the colour temperature move and step\r\nvalues. IKEA and Philips light do not use the\r\ncolour temperature ranges:\r\n\r\n- IKEA  \r\n  Range: 250 to 454   \r\n  Increments: 204   \r\n  Steps (10%): 20   \r\n- Philips  \r\n  Range: 153 to 500   \r\n  Increments: 347   \r\n  Steps (10%): 35   ",
         "category": "",
         "in": [],
         "out": [
             {
-                "x": 1320,
-                "y": 320,
+                "x": 1300,
+                "y": 340,
                 "wires": [
                     {
                         "id": "6d5d3165d8007a7c",
@@ -18,15 +18,31 @@
                 ]
             },
             {
-                "x": 1290,
-                "y": 220,
+                "x": 1310,
+                "y": 500,
+                "wires": [
+                    {
+                        "id": "00b1caec49ab0bba",
+                        "port": 0
+                    }
+                ]
+            },
+            {
+                "x": 1310,
+                "y": 660,
+                "wires": [
+                    {
+                        "id": "f3bfc6af53524b05",
+                        "port": 0
+                    }
+                ]
+            },
+            {
+                "x": 1250,
+                "y": 180,
                 "wires": [
                     {
                         "id": "8de3196fa2f271d8",
-                        "port": 0
-                    },
-                    {
-                        "id": "c45268b1a5f7533e",
                         "port": 0
                     }
                 ]
@@ -54,12 +70,12 @@
                 "value": "25"
             },
             {
-                "name": "tempClickStep",
+                "name": "tempMoveStep",
                 "type": "num",
                 "value": "35"
             },
             {
-                "name": "tempMoveStep",
+                "name": "tempClickStep",
                 "type": "num",
                 "value": "35"
             },
@@ -77,12 +93,19 @@
                 "name": "buttonTopic",
                 "type": "env",
                 "value": "zigbee2mqtt/${buttonEntity}"
+            },
+            {
+                "name": "colorPalette",
+                "type": "json",
+                "value": "{\"white\":{\"rgb\":\"255,255,255\"},\"red\":{\"rgb\":\"255,0,0\"},\"rose\":{\"rgb\":\"255,0,128\"},\"magenta\":{\"rgb\":\"255,0,255\"},\"violet\":{\"rgb\":\"128,0,255\"},\"blue\":{\"rgb\":\"0,0,255\"},\"azure\":{\"rgb\":\"0,128,255\"},\"cyan\":{\"rgb\":\"0,255,255\"},\"spring green\":{\"rgb\":\"0,255,128\"},\"green\":{\"rgb\":\"0,255,0\"},\"chartreuse\":{\"rgb\":\"128,255,0\"},\"yellow\":{\"rgb\":\"255,255,0\"},\"orange\":{\"rgb\":\"255,128,0\"}}"
             }
         ],
         "meta": {},
         "color": "#DDAA99",
         "outputLabels": [
-            "MQTT TRADFRI or Hue Bulb",
+            "MQTT - On, Off, Brightness",
+            "MQTT - Arrows White Ambiance",
+            "MQTT - Arrows Color Ambiance",
             "Bulb State"
         ]
     },
@@ -121,16 +144,6 @@
             },
             {
                 "t": "eq",
-                "v": "arrow_right_click",
-                "vt": "str"
-            },
-            {
-                "t": "eq",
-                "v": "arrow_left_click",
-                "vt": "str"
-            },
-            {
-                "t": "eq",
                 "v": "arrow_right_hold",
                 "vt": "str"
             },
@@ -148,13 +161,23 @@
                 "t": "eq",
                 "v": "arrow_left_release",
                 "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "arrow_right_click",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "arrow_left_click",
+                "vt": "str"
             }
         ],
         "checkall": "true",
         "repair": false,
         "outputs": 11,
-        "x": 410,
-        "y": 420,
+        "x": 390,
+        "y": 540,
         "wires": [
             [
                 "b203a925eabfad79"
@@ -172,12 +195,6 @@
                 "528fd8e14a6561e7"
             ],
             [
-                "d69568c9a99a79f8"
-            ],
-            [
-                "61d6583380bc4ff5"
-            ],
-            [
                 "f7617074b3ea53d9"
             ],
             [
@@ -188,6 +205,14 @@
             ],
             [
                 "e1ed580b99d18089"
+            ],
+            [
+                "d69568c9a99a79f8",
+                "42681ae97a129340"
+            ],
+            [
+                "61d6583380bc4ff5",
+                "5c5b64caac1fb157"
             ]
         ]
     },
@@ -203,8 +228,8 @@
         "nl": false,
         "rap": false,
         "inputs": 0,
-        "x": 180,
-        "y": 160,
+        "x": 160,
+        "y": 180,
         "wires": [
             [
                 "adefa591a2b72bf4"
@@ -228,8 +253,8 @@
         "drop": true,
         "allowrate": false,
         "outputs": 1,
-        "x": 410,
-        "y": 160,
+        "x": 390,
+        "y": 180,
         "wires": [
             [
                 "8de3196fa2f271d8"
@@ -248,8 +273,8 @@
         "nl": false,
         "rap": false,
         "inputs": 0,
-        "x": 200,
-        "y": 240,
+        "x": 180,
+        "y": 280,
         "wires": [
             [
                 "65d5412af2e3a2db"
@@ -275,8 +300,8 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 650,
-        "y": 280,
+        "x": 630,
+        "y": 300,
         "wires": [
             [
                 "6d5d3165d8007a7c"
@@ -316,8 +341,8 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 690,
-        "y": 160,
+        "x": 670,
+        "y": 180,
         "wires": [
             []
         ]
@@ -334,8 +359,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 650,
-        "y": 240,
+        "x": 630,
+        "y": 260,
         "wires": [
             [
                 "6d5d3165d8007a7c"
@@ -363,8 +388,8 @@
         "topic": "",
         "payload": "",
         "payloadType": "date",
-        "x": 200,
-        "y": 80,
+        "x": 180,
+        "y": 100,
         "wires": [
             [
                 "bbb6b3c1c2eb0107"
@@ -375,16 +400,16 @@
         "id": "bbb6b3c1c2eb0107",
         "type": "function",
         "z": "fa70fc69676a5964",
-        "name": "Set Initial Bulb State",
-        "func": "if (flow.get(\"bulbState\") === undefined) {\n    var bulb = {\n        \"state\": \"off\",\n        \"brightness\": 100\n    };\n    flow.set(\"bulbState\", bulb);\n}\n\nreturn msg;",
+        "name": "Init Vars",
+        "func": "// Set Initial Bulb State\nif (flow.get(\"bulbState\") === undefined) {\n    var bulb = {\n        \"state\": \"off\",\n        \"brightness\": 100\n    };\n    flow.set(\"bulbState\", bulb);\n}\n\n// Set Color Loop Counter\nif (flow.get(\"colorCount\") === undefined) {\n    var count = 0;\n    flow.set(\"colorCount\", count);\n}\n\nmsg.payload.bulbState = flow.get(\"bulbState\");\nmsg.payload.colorCount = flow.get(\"colorCount\");\n\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 440,
-        "y": 80,
+        "x": 380,
+        "y": 100,
         "wires": [
             []
         ]
@@ -395,8 +420,8 @@
         "z": "fa70fc69676a5964",
         "name": "Subflow: IKEA STYRBAR Controller and IKEA TRADFRI or Philips Hue Light",
         "info": "",
-        "x": 870,
-        "y": 80,
+        "x": 850,
+        "y": 100,
         "wires": []
     },
     {
@@ -411,8 +436,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 700,
-        "y": 320,
+        "x": 680,
+        "y": 340,
         "wires": [
             [
                 "6d5d3165d8007a7c"
@@ -438,8 +463,8 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 700,
-        "y": 400,
+        "x": 680,
+        "y": 420,
         "wires": [
             [
                 "6d5d3165d8007a7c"
@@ -458,8 +483,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 710,
-        "y": 360,
+        "x": 690,
+        "y": 380,
         "wires": [
             [
                 "6d5d3165d8007a7c"
@@ -485,8 +510,8 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 1070,
-        "y": 320,
+        "x": 1050,
+        "y": 340,
         "wires": [
             []
         ]
@@ -503,11 +528,12 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 700,
-        "y": 520,
+        "x": 680,
+        "y": 500,
         "wires": [
             [
-                "6d5d3165d8007a7c"
+                "00b1caec49ab0bba",
+                "f3bfc6af53524b05"
             ]
         ]
     },
@@ -523,11 +549,12 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 710,
-        "y": 560,
+        "x": 690,
+        "y": 540,
         "wires": [
             [
-                "6d5d3165d8007a7c"
+                "00b1caec49ab0bba",
+                "f3bfc6af53524b05"
             ]
         ]
     },
@@ -550,11 +577,12 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 700,
-        "y": 600,
+        "x": 680,
+        "y": 580,
         "wires": [
             [
-                "6d5d3165d8007a7c"
+                "00b1caec49ab0bba",
+                "f3bfc6af53524b05"
             ]
         ]
     },
@@ -570,11 +598,11 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 700,
-        "y": 440,
+        "x": 680,
+        "y": 660,
         "wires": [
             [
-                "6d5d3165d8007a7c"
+                "00b1caec49ab0bba"
             ]
         ]
     },
@@ -590,12 +618,102 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 710,
-        "y": 480,
+        "x": 690,
+        "y": 700,
         "wires": [
             [
-                "6d5d3165d8007a7c"
+                "00b1caec49ab0bba"
             ]
+        ]
+    },
+    {
+        "id": "42681ae97a129340",
+        "type": "function",
+        "z": "fa70fc69676a5964",
+        "name": "Color Change Click Up",
+        "func": "// Color Change Click Up\n\nvar count = flow.get(\"colorCount\");\nvar colors = env.get(\"colorPalette\");\nvar keys = Object.keys(colors);\n\ncount++;\nif (count >= keys.length) {\n    count = 0;\n}\nflow.set(\"colorCount\", count);\n\nmsg.payload = {\n    \"color\": colors[keys[count]],\n    \"count\": count\n};\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 680,
+        "y": 780,
+        "wires": [
+            [
+                "f3bfc6af53524b05"
+            ]
+        ]
+    },
+    {
+        "id": "5c5b64caac1fb157",
+        "type": "function",
+        "z": "fa70fc69676a5964",
+        "name": "Color Change Click Down",
+        "func": "// Color Change Click Down\n\nvar count = flow.get(\"colorCount\");\nvar colors = env.get(\"colorPalette\");\nvar keys = Object.keys(colors);\n\ncount--;\nif (count < 0) {\n    count = keys.length - 1;\n} \nflow.set(\"colorCount\", count);\n\nmsg.payload = {\n    \"color\": colors[keys[count]],\n    \"count\": count\n};\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 690,
+        "y": 820,
+        "wires": [
+            [
+                "f3bfc6af53524b05"
+            ]
+        ]
+    },
+    {
+        "id": "00b1caec49ab0bba",
+        "type": "change",
+        "z": "fa70fc69676a5964",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "lightOutTopic",
+                "tot": "env"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1050,
+        "y": 500,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "f3bfc6af53524b05",
+        "type": "change",
+        "z": "fa70fc69676a5964",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "lightOutTopic",
+                "tot": "env"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1050,
+        "y": 660,
+        "wires": [
+            []
         ]
     },
     {
