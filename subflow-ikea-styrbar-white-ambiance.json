@@ -1,0 +1,632 @@
+[
+    {
+        "id": "fa70fc69676a5964",
+        "type": "subflow",
+        "name": "Subflow: STRYBAR to TRADFRI or Hue (w/Color Temp)",
+        "info": "# STRYBAR to TRADFRI or Hue (w/Color Temp)\r\n\r\nThis subflow is with map the output of an\r\nIKEA STYRBAR controller to a Philips White\r\nAmbiance or an IKEA dimmable white spectrum\r\nlight. These lights support changing the colour \r\nbalance of the white spectrum light.\r\n\r\nIn the environment variables set appropriate\r\nsteps for the colour temperature move and step\r\nvalues. IKEA and Philips light do not use the\r\ncolour temperature ranges:\r\n\r\n- IKEA  \r\n  Range: 250 to 454   \r\n  Increments: 204   \r\n  Steps (10%): 20   \r\n- Philips  \r\n  Range: 153 to 500   \r\n  Increments: 347   \r\n  Steps (10%): 35   ",
+        "category": "",
+        "in": [],
+        "out": [
+            {
+                "x": 1320,
+                "y": 320,
+                "wires": [
+                    {
+                        "id": "6d5d3165d8007a7c",
+                        "port": 0
+                    }
+                ]
+            },
+            {
+                "x": 1290,
+                "y": 220,
+                "wires": [
+                    {
+                        "id": "8de3196fa2f271d8",
+                        "port": 0
+                    },
+                    {
+                        "id": "c45268b1a5f7533e",
+                        "port": 0
+                    }
+                ]
+            }
+        ],
+        "env": [
+            {
+                "name": "lightInEntity",
+                "type": "str",
+                "value": ""
+            },
+            {
+                "name": "lightOutEntity",
+                "type": "str",
+                "value": ""
+            },
+            {
+                "name": "buttonEntity",
+                "type": "str",
+                "value": ""
+            },
+            {
+                "name": "dimmerStep",
+                "type": "str",
+                "value": "25"
+            },
+            {
+                "name": "tempClickStep",
+                "type": "num",
+                "value": "35"
+            },
+            {
+                "name": "tempMoveStep",
+                "type": "num",
+                "value": "35"
+            },
+            {
+                "name": "lightInTopic",
+                "type": "env",
+                "value": "zigbee2mqtt/${lightInEntity}"
+            },
+            {
+                "name": "lightOutTopic",
+                "type": "env",
+                "value": "zigbee2mqtt/${lightOutEntity}/set"
+            },
+            {
+                "name": "buttonTopic",
+                "type": "env",
+                "value": "zigbee2mqtt/${buttonEntity}"
+            }
+        ],
+        "meta": {},
+        "color": "#DDAA99",
+        "outputLabels": [
+            "MQTT TRADFRI or Hue Bulb",
+            "Bulb State"
+        ]
+    },
+    {
+        "id": "65d5412af2e3a2db",
+        "type": "switch",
+        "z": "fa70fc69676a5964",
+        "name": "Messages",
+        "property": "payload.action",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "on",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "off",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "brightness_move_up",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "brightness_move_down",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "brightness_stop",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "arrow_right_click",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "arrow_left_click",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "arrow_right_hold",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "arrow_left_hold",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "arrow_right_release",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "arrow_left_release",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 11,
+        "x": 410,
+        "y": 420,
+        "wires": [
+            [
+                "b203a925eabfad79"
+            ],
+            [
+                "f32ad2f9dbea1f11"
+            ],
+            [
+                "a027a863ad79ca76"
+            ],
+            [
+                "e4c0dded9efb542f"
+            ],
+            [
+                "528fd8e14a6561e7"
+            ],
+            [
+                "d69568c9a99a79f8"
+            ],
+            [
+                "61d6583380bc4ff5"
+            ],
+            [
+                "f7617074b3ea53d9"
+            ],
+            [
+                "66f44c037e6ee29e"
+            ],
+            [
+                "e1ed580b99d18089"
+            ],
+            [
+                "e1ed580b99d18089"
+            ]
+        ]
+    },
+    {
+        "id": "c45268b1a5f7533e",
+        "type": "mqtt in",
+        "z": "fa70fc69676a5964",
+        "name": "IKEA Light",
+        "topic": "${lightInTopic}",
+        "qos": "2",
+        "datatype": "json",
+        "broker": "92389a82186fb042",
+        "nl": false,
+        "rap": false,
+        "inputs": 0,
+        "x": 180,
+        "y": 160,
+        "wires": [
+            [
+                "adefa591a2b72bf4"
+            ]
+        ]
+    },
+    {
+        "id": "adefa591a2b72bf4",
+        "type": "delay",
+        "z": "fa70fc69676a5964",
+        "name": "",
+        "pauseType": "rate",
+        "timeout": "5",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": true,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 410,
+        "y": 160,
+        "wires": [
+            [
+                "8de3196fa2f271d8"
+            ]
+        ]
+    },
+    {
+        "id": "440434ae0ec2eb2a",
+        "type": "mqtt in",
+        "z": "fa70fc69676a5964",
+        "name": "IKEA STYRBAR",
+        "topic": "${buttonTopic}",
+        "qos": "1",
+        "datatype": "json",
+        "broker": "92389a82186fb042",
+        "nl": false,
+        "rap": false,
+        "inputs": 0,
+        "x": 200,
+        "y": 240,
+        "wires": [
+            [
+                "65d5412af2e3a2db"
+            ]
+        ]
+    },
+    {
+        "id": "f32ad2f9dbea1f11",
+        "type": "change",
+        "z": "fa70fc69676a5964",
+        "name": "Off",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "{ \"state\": \"off\"}",
+                "tot": "json"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 650,
+        "y": 280,
+        "wires": [
+            [
+                "6d5d3165d8007a7c"
+            ]
+        ]
+    },
+    {
+        "id": "8de3196fa2f271d8",
+        "type": "change",
+        "z": "fa70fc69676a5964",
+        "name": "Update Bulb State",
+        "rules": [
+            {
+                "t": "set",
+                "p": "bulbState",
+                "pt": "flow",
+                "to": "{}",
+                "tot": "json"
+            },
+            {
+                "t": "set",
+                "p": "bulbState.brightness",
+                "pt": "flow",
+                "to": "payload.brightness",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "bulbState.state",
+                "pt": "flow",
+                "to": "payload.state",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 690,
+        "y": 160,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "b203a925eabfad79",
+        "type": "function",
+        "z": "fa70fc69676a5964",
+        "name": "On",
+        "func": "// On\n\nvar bulb = flow.get(\"bulbState\");\nmsg.payload = {};\n\nif (bulb.state.toLowerCase() === \"on\" && bulb.brightness < 254) {\n    msg.payload.brightness = 254;\n}\n\nmsg.payload.state = \"on\";\nreturn msg",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 650,
+        "y": 240,
+        "wires": [
+            [
+                "6d5d3165d8007a7c"
+            ]
+        ]
+    },
+    {
+        "id": "6b33eb7b87fd4dfb",
+        "type": "inject",
+        "z": "fa70fc69676a5964",
+        "name": "Init Vars",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 200,
+        "y": 80,
+        "wires": [
+            [
+                "bbb6b3c1c2eb0107"
+            ]
+        ]
+    },
+    {
+        "id": "bbb6b3c1c2eb0107",
+        "type": "function",
+        "z": "fa70fc69676a5964",
+        "name": "Set Initial Bulb State",
+        "func": "if (flow.get(\"bulbState\") === undefined) {\n    var bulb = {\n        \"state\": \"off\",\n        \"brightness\": 100\n    };\n    flow.set(\"bulbState\", bulb);\n}\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 440,
+        "y": 80,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "3aadae8d1640a78c",
+        "type": "comment",
+        "z": "fa70fc69676a5964",
+        "name": "Subflow: IKEA STYRBAR Controller and IKEA TRADFRI or Philips Hue Light",
+        "info": "",
+        "x": 870,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "a027a863ad79ca76",
+        "type": "function",
+        "z": "fa70fc69676a5964",
+        "name": "Brightness Move Up",
+        "func": "// Brightness Move Up\n\nmsg.payload = {\n    \"brightness_move_onoff\": env.get(\"dimmerStep\")\n};\n\nreturn msg",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 700,
+        "y": 320,
+        "wires": [
+            [
+                "6d5d3165d8007a7c"
+            ]
+        ]
+    },
+    {
+        "id": "528fd8e14a6561e7",
+        "type": "change",
+        "z": "fa70fc69676a5964",
+        "name": "Brightness Move Stop",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "{ \"brightness_move\": 0}",
+                "tot": "json"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 700,
+        "y": 400,
+        "wires": [
+            [
+                "6d5d3165d8007a7c"
+            ]
+        ]
+    },
+    {
+        "id": "e4c0dded9efb542f",
+        "type": "function",
+        "z": "fa70fc69676a5964",
+        "name": "Brightness Move Down",
+        "func": "// Brightness Move Down\n\nmsg.payload = {\n    \"brightness_move_onoff\": -env.get(\"dimmerStep\")\n};\n\nreturn msg",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 710,
+        "y": 360,
+        "wires": [
+            [
+                "6d5d3165d8007a7c"
+            ]
+        ]
+    },
+    {
+        "id": "6d5d3165d8007a7c",
+        "type": "change",
+        "z": "fa70fc69676a5964",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "lightOutTopic",
+                "tot": "env"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1070,
+        "y": 320,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "f7617074b3ea53d9",
+        "type": "function",
+        "z": "fa70fc69676a5964",
+        "name": "Color Temp Move Up",
+        "func": "// Brightness Move Up\n\nmsg.payload = {\n    \"color_temp_move\": env.get(\"tempMoveStep\")\n};\n\nreturn msg",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 700,
+        "y": 520,
+        "wires": [
+            [
+                "6d5d3165d8007a7c"
+            ]
+        ]
+    },
+    {
+        "id": "66f44c037e6ee29e",
+        "type": "function",
+        "z": "fa70fc69676a5964",
+        "name": "Color Temp Move Down",
+        "func": "// Brightness Move Down\n\nmsg.payload = {\n    \"color_temp_move\": -env.get(\"tempMoveStep\")\n};\n\nreturn msg",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 710,
+        "y": 560,
+        "wires": [
+            [
+                "6d5d3165d8007a7c"
+            ]
+        ]
+    },
+    {
+        "id": "e1ed580b99d18089",
+        "type": "change",
+        "z": "fa70fc69676a5964",
+        "name": "Color Temp Move Stop",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "{ \"color_temp_move\": 0}",
+                "tot": "json"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 700,
+        "y": 600,
+        "wires": [
+            [
+                "6d5d3165d8007a7c"
+            ]
+        ]
+    },
+    {
+        "id": "d69568c9a99a79f8",
+        "type": "function",
+        "z": "fa70fc69676a5964",
+        "name": "Color Temp Click Up",
+        "func": "// Color Temp Click Up\n\nmsg.payload = {\n    \"color_temp_step\": env.get(\"tempClickStep\")\n};\n\nreturn msg",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 700,
+        "y": 440,
+        "wires": [
+            [
+                "6d5d3165d8007a7c"
+            ]
+        ]
+    },
+    {
+        "id": "61d6583380bc4ff5",
+        "type": "function",
+        "z": "fa70fc69676a5964",
+        "name": "Color Temp Click Down",
+        "func": "// Color Temp Click Down\n\nmsg.payload = {\n    \"color_temp_step\": -env.get(\"tempClickStep\")\n};\n\nreturn msg",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 710,
+        "y": 480,
+        "wires": [
+            [
+                "6d5d3165d8007a7c"
+            ]
+        ]
+    },
+    {
+        "id": "92389a82186fb042",
+        "type": "mqtt-broker",
+        "name": "MQTT",
+        "broker": "mosquitto",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    }
+]
